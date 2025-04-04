@@ -43,5 +43,7 @@ Technologies used in the project:
 
 *   React
 *   Typescript
+*   tailwindCSS
 *   Antd
 *   Dummy API
+  

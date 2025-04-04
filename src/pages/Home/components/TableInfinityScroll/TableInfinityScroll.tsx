@@ -16,10 +16,12 @@ const TableInfinityScroll: FunctionComponent<Props> = () => {
           (node.scrollTop / (node.scrollHeight - node.clientHeight)) * 100;
 
         if (perc >= 100) {
-          dispatch({
-            type: "SET_CURRENT_PAGE",
-            payload: state.pagination.current + 1,
-          });
+          if (!state.filter.role && !state.q) {
+            dispatch({
+              type: "SET_CURRENT_PAGE",
+              payload: state.pagination.current + 1,
+            });
+          }
         }
       });
     }
@@ -27,7 +29,7 @@ const TableInfinityScroll: FunctionComponent<Props> = () => {
       node?.removeEventListener("scroll", () => {});
     };
   });
-  return <TablePagination pagination={false} className="tab1" />;
+  return <TablePagination pagination={false} className="tab1" isInfinityScroll />;
 };
 
 export default TableInfinityScroll;

@@ -20,7 +20,9 @@ const userApis = {
     }
   ) {
     const response = await instance.get(
-      `/users/search?skip=${params?.offset}&limit=${params?.limit}&q=${params?.q}`
+      `/users/search?skip=${params?.q ? 0 : params?.offset}&limit=${
+        params?.limit
+      }&q=${params?.q}`
     );
     return response?.data;
   },

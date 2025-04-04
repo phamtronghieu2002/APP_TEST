@@ -7,28 +7,27 @@ import { FC, useContext } from "react";
 import { filterList } from "@/constants";
 
 interface TablePaginationProps {
-    components?:any
-    pagination?:boolean
-    className?:string
+  components?: any;
+  pagination?: boolean;
+  className?: string;
+  isInfinityScroll?: boolean;
 }
- 
-const TablePagination: FC<TablePaginationProps> = ({components,pagination=true,className}) => {
 
-    const { state, dispatch } = useContext(myContext);
+const TablePagination: FC<TablePaginationProps> = ({
+  components,
+  pagination = true,
+  className,
+  isInfinityScroll = false,
+}) => {
+  const { state, dispatch } = useContext(myContext);
 
-    const users = state.data;
-   
+  const users = state.data;
 
-
-
-    
   const rowSelection: TableProps<UserDataTableType>["rowSelection"] = {
     onChange: (
       selectedRowKeys: React.Key[],
       selectedRows: UserDataTableType[]
-    ) => {
-   
-    },
+    ) => {},
     getCheckboxProps: (record: UserDataTableType) => ({
       name: record.name,
     }),
@@ -36,55 +35,62 @@ const TablePagination: FC<TablePaginationProps> = ({components,pagination=true,c
 
   const onFilter = (label: string, value: string) => {
     dispatch({ type: "SET_FILTER", payload: { [label]: value } });
+    if (isInfinityScroll) {
+      dispatch({ type: "SET_DATA", payload: [] });
+    }
   };
-    return ( 
+  return (
+    <TableC
+      className={className}
+      style={{ height: "460px" }}
+      loading={state.isLoading}
+      scroll={{
+        y: 460,
+        x: "max-content",
+        scrollToFirstRowOnChange: false,
+      }}
+      pagination={
+        pagination
+          ? {
+              className: "mt-4",
+              total: state.pagination.total,
+              current: state.pagination.current,
+              pageSize: state.pagination.limit,
+              onChange: (page) => {
+                dispatch({ type: "SET_CURRENT_PAGE", payload: page });
+                dispatch({
+                  type: "SET_OFFSET",
+                  payload: (page - 1) * state.pagination.limit,
+                });
+              },
+              onShowSizeChange: (current, pageSize) => {
+                dispatch({ type: "SET_LIMIT", payload: pageSize });
+              },
+            }
+          : {}
+      }
+      search={{
+        onSearch: (value) => {
+          dispatch({ type: "SET_Q", payload: value });
+          if (isInfinityScroll) {
+            dispatch({ type: "SET_DATA", payload: [] });
+          }
+        },
+        width: 300,
+        placeholder: "Search by name or email",
+      }}
+      filter={{
+        filterList: filterList,
+        title: "Filter By",
+        trigger: "click",
+        onFilter: onFilter,
+      }}
+      rowSelection={{ type: "checkbox", ...rowSelection }}
+      columns={columns}
+      dataSource={users}
+      components={components}
+    />
+  );
+};
 
-
-        <TableC
-        className={className}
-        style={{ height: "460px" }}
-        loading={state.isLoading}
-        scroll={{
-          y: 460,
-          x: "max-content",
-          scrollToFirstRowOnChange: false,
-        }}
-        pagination={pagination ?{
-            className: "mt-4",
-            total: state.pagination.total,
-            current: state.pagination.current,
-            pageSize: state.pagination.limit,
-            onChange: (page) => {
-              dispatch({ type: "SET_CURRENT_PAGE", payload: page });
-              dispatch({
-                type: "SET_OFFSET",
-                payload: (page - 1) * state.pagination.limit,
-              });
-            },
-            onShowSizeChange: (current, pageSize) => {
-              dispatch({ type: "SET_LIMIT", payload: pageSize });
-            },
-          }:{}}
-        search={{
-          onSearch: (value) => {
-            dispatch({ type: "SET_Q", payload: value });
-          },
-          width: 300,
-          placeholder: "Search by name or email",
-        
-        }}
-        filter={{
-          filterList: filterList,
-          title: "Filter By",
-          trigger: "click",
-          onFilter: onFilter,
-        }}
-        rowSelection={{ type: "checkbox", ...rowSelection }}
-        columns={columns}
-        dataSource={users}
-        components={components}
-      />
-     );
-}
- 
 export default TablePagination;

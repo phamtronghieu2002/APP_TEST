@@ -82,9 +82,6 @@ const DataProvider: FC<AuthProviderProps> = ({ children }) => {
       state.tab,
     ],
 
-  
-    
-
     queryFn: () => {
       if (state.filter.role) {
         return userApis.filterUser({
@@ -103,14 +100,16 @@ const DataProvider: FC<AuthProviderProps> = ({ children }) => {
       });
     },
   });
-  console.log("state",state);
+  console.log("state", state);
   useEffect(() => {
     const dataProcess = processData(data?.users);
 
-    if (state.tab=="1") {
+    if (state.tab == "1") {
+      if (state.filter.role || state.q) {
+        return dispatch({ type: "SET_DATA", payload: dataProcess });
+      }
       return dispatch({
         type: "SET_DATA",
-        // nối 2 mảng 
         payload: [...state.data, ...dataProcess],
       });
     }

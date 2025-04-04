@@ -1,0 +1,38 @@
+// this code on github issue :https://github.com/ant-design/ant-design/issues/23974#issuecomment-698787941
+.ant-table-wrapper.tab0 {
+  height: 100%;
+
+  .ant-spin-nested-loading {
+    height: 100%;
+
+    .ant-spin-container {
+      height: 100%;
+      display: flex;
+      flex-flow: column nowrap;
+
+      .ant-table {
+        flex: auto;
+        overflow: hidden;
+
+        .ant-table-container {
+          height: 100%;
+          display: flex;
+          flex-flow: column nowrap;
+
+          .ant-table-header {
+            flex: none;
+          }
+
+          .ant-table-body {
+            flex: auto;
+            overflow: scroll;
+          }
+        }
+      }
+
+      .ant-table-pagination {
+        flex: none;
+      }
+    }
+  }
+}
